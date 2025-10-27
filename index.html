@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guía Completa de HTML Canvas y JavaScript</title>
+  <style>
+    body {
+      background: #fff;
+      color: #000;
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #003366;
+    }
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background: #f5f5f5;
+      border: 2px solid #003366;
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Guía Práctica: Desarrollando con HTML Canvas</h1>
+  <p>En esta guía verás todos los ejemplos del uso de <code>&lt;canvas&gt;</code> con JavaScript paso a paso.</p>
+
+  <!-- ================= MÓDULO 1 ================= -->
+  <section>
+    <h2>Módulo 1: Fundamentos y Dibujo de Figuras Básicas</h2>
+
+    <h3>Paso 1.2: Dibujando Rectángulos</h3>
+    <canvas id="canvasRectangulos" width="400" height="200"></canvas>
+
+    <h3>Paso 1.3: Dibujando Trazados (Triángulo)</h3>
+    <canvas id="canvasTriangulo" width="400" height="200"></canvas>
+
+    <h3>Paso 1.4: Dibujando Círculos (Arcos)</h3>
+    <canvas id="canvasCirculo" width="400" height="200"></canvas>
+  </section>
+
+  <!-- ================= MÓDULO 2 ================= -->
+  <section>
+    <h2>Módulo 2: Animaciones Fluidas</h2>
+
+    <h3>Paso 2.1: Movimiento Lineal</h3>
+    <canvas id="canvasLineal" width="400" height="200"></canvas>
+
+    <h3>Paso 2.2: Movimiento Bidimensional con Rebote</h3>
+    <canvas id="canvasRebote" width="400" height="200"></canvas>
+  </section>
+
+  <!-- ================= MÓDULO 3 ================= -->
+  <section>
+    <h2>Módulo 3: Proyecto de Juego 2D – Detección de Colisiones</h2>
+    <h3>Paso 3.1 a 3.3: Ladrillos y Colisiones</h3>
+    <canvas id="canvasJuego" width="480" height="300"></canvas>
+  </section>
+
+<script>
+// =================== MÓDULO 1 ===================
+
+// Paso 1.2: Rectángulos
+const ctxRect = document.getElementById("canvasRectangulos").getContext("2d");
+ctxRect.fillStyle = "gray";
+ctxRect.fillRect(25, 25, 100, 100);
+ctxRect.clearRect(45, 45, 60, 60);
+ctxRect.strokeStyle = "red";
+ctxRect.strokeRect(50, 50, 50, 50);
+
+// Paso 1.3: Triángulo
+const ctxTri = document.getElementById("canvasTriangulo").getContext("2d");
+ctxTri.beginPath();
+ctxTri.moveTo(125, 125);
+ctxTri.lineTo(125, 45);
+ctxTri.lineTo(45, 125);
+ctxTri.closePath();
+ctxTri.strokeStyle = "blue";
+ctxTri.stroke();
+
+// Paso 1.4: Círculo (cara sonriente)
+const ctxCirc = document.getElementById("canvasCirculo").getContext("2d");
+ctxCirc.beginPath();
+ctxCirc.arc(150, 100, 50, 0, Math.PI * 2, true);
+ctxCirc.moveTo(185, 100);
+ctxCirc.arc(150, 100, 35, 0, Math.PI, false);
+ctxCirc.moveTo(135, 85);
+ctxCirc.arc(130, 85, 5, 0, Math.PI * 2, true);
+ctxCirc.moveTo(175, 85);
+ctxCirc.arc(170, 85, 5, 0, Math.PI * 2, true);
+ctxCirc.strokeStyle = "black";
+ctxCirc.stroke();
+
+// =================== MÓDULO 2 ===================
+
+// Paso 2.1: Movimiento lineal
+const canvasLineal = document.getElementById("canvasLineal");
+const ctxLineal = canvasLineal.getContext("2d");
+let x = 0;
+function moverLineal() {
+  ctxLineal.clearRect(0, 0, canvasLineal.width, canvasLineal.height);
+  ctxLineal.fillStyle = "green";
+  ctxLineal.fillRect(x, 80, 30, 30);
+  x += 2;
+  if (x > canvasLineal.width) x = -30;
+  requestAnimationFrame(moverLineal);
+}
+moverLineal();
+
+// Paso 2.2: Movimiento bidimensional (rebote)
+const canvasRebote = document.getElementById("canvasRebote");
+const ctxRebote = canvasRebote.getContext("2d");
+let xd = 50, yd = 50, speedX = 2, speedY = 2;
+function moverRebote() {
+  ctxRebote.clearRect(0, 0, canvasRebote.width, canvasRebote.height);
+  ctxRebote.fillStyle = "red";
+  ctxRebote.fillRect(xd, yd, 30, 30);
+  xd += speedX;
+  yd += speedY;
+  if (xd + 30 > canvasRebote.width || xd < 0) speedX = -speedX;
+  if (yd + 30 > canvasRebote.height || yd < 0) speedY = -speedY;
+  requestAnimationFrame(moverRebote);
+}
+moverRebote();
+
+// =================== MÓDULO 3 ===================
+
+// Juego de ladrillos y colisiones
+const canvasJuego = document.getElementById("canvasJuego");
+const ctxJuego = canvasJuego.getContext("2d");
+
+let ballX = canvasJuego.width / 2;
+let ballY = canvasJuego.height - 30;
+let dx = 2;
+let dy = -2;
+const ballRadius = 8;
+
+const brickRowCount = 3;
+const brickColumnCount = 5;
+const brickWidth = 75;
+const brickHeight = 20;
+const brickPadding = 10;
+const brickOffsetTop = 30;
+const brickOffsetLeft = 30;
+
+let bricks = [];
+for (let c = 0; c < brickColumnCount; c++) {
+  bricks[c] = [];
+  for (let r = 0; r < brickRowCount; r++) {
+    bricks[c][r] = { x: 0, y: 0, status: 1 };
+  }
+}
+
+function drawBall() {
+  ctxJuego.beginPath();
+  ctxJuego.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+  ctxJuego.fillStyle = "orange";
+  ctxJuego.fill();
+  ctxJuego.closePath();
+}
+
+function drawBricks() {
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < brickRowCount; r++) {
+      if (bricks[c][r].status == 1) {
+        let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+        let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+        bricks[c][r].x = brickX;
+        bricks[c][r].y = brickY;
+        ctxJuego.beginPath();
+        ctxJuego.rect(brickX, brickY, brickWidth, brickHeight);
+        ctxJuego.fillStyle = "#003366";
+        ctxJuego.fill();
+        ctxJuego.closePath();
+      }
+    }
+  }
+}
+
+function collisionDetection() {
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < brickRowCount; r++) {
+      let b = bricks[c][r];
+      if (b.status == 1) {
+        if (ballX > b.x && ballX < b.x + brickWidth &&
+            ballY > b.y && ballY < b.y + brickHeight) {
+          dy = -dy;
+          b.status = 0;
+        }
+      }
+    }
+  }
+}
+
+function drawJuego() {
+  ctxJuego.clearRect(0, 0, canvasJuego.width, canvasJuego.height);
+  drawBricks();
+  drawBall();
+  collisionDetection();
+
+  if (ballX + dx > canvasJuego.width - ballRadius || ballX + dx < ballRadius) dx = -dx;
+  if (ballY + dy < ballRadius || ballY + dy > canvasJuego.height - ballRadius) dy = -dy;
+
+  ballX += dx;
+  ballY += dy;
+
+  requestAnimationFrame(drawJuego);
+}
+drawJuego();
+</script>
+
+</body>
+</html>
